@@ -1,4 +1,6 @@
 import React, { useRef, useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import Test from "./components/Test";
 
 const App = () => {
   const readRef = useRef(null);
@@ -7,7 +9,7 @@ const App = () => {
   const [dataToSend, setDataToSend] = useState("");
   const [receivedData, setReceivedData] = useState("");
   const [asciiArr, setAsciiArr] = useState([]);
-
+  const [toShowStringArray, setToShowStringArray] = useState([]);
   const connectPort = async () => {
     try {
       portRef.current = await navigator.serial.requestPort();
@@ -26,20 +28,27 @@ const App = () => {
   const readData = async () => {
     readRef.current = portRef.current.readable.getReader();
 
-    // Listen to data coming from the serial device.
-    while (true) {
-      const { value, done } = await readRef.current.read();
-      if (done) {
-        // Allow the serial port to be closed later.
-        console.log("i am closed");
-        readRef.current.releaseLock();
-        break;
+    try {
+      while (true) {
+        const { value, done } = await readRef.current.read();
+        if (done) {
+          // Allow the serial port to be closed later.
+          reader.releaseLock();
+          break;
+        }
+        if (value) {
+          const toShow = convertToNormalString(value);
+          setToShowStringArray((prev) => [...prev, toShow]);
+
+          //  receivedDataDiv.innerText += toShow;
+        }
       }
-      // // value is a Uint8Array.
-      // setReceivedData((prev) => [...prev, value]);
+    } catch (error) {
+      // TODO: Handle non-fatal read error.
     }
   };
   const writeData = async () => {
+    setToShowStringArray([]);
     writeRef.current = portRef.current.writable.getWriter();
     const arr = [];
     // dataToSend?.map((val, i) => {
@@ -59,17 +68,11 @@ const App = () => {
     writeRef.current.releaseLock();
   };
 
-  const convertToNormalString = () => {
+  const convertToNormalString = (asciiArr) => {
     let ans = "";
     for (let i = 0; i < asciiArr?.length; i++) {
       ans += String(String.fromCharCode(asciiArr[i]));
     }
-
-    // asciiArr?.map((val, idx) => {
-    //   ans += String(String.fromCharCode(val));
-    // });
-    // setReceivedData(ans);
-
     return ans;
   };
 
@@ -102,8 +105,11 @@ const App = () => {
         Send
       </button>
       <br />
-      Received Data:{convertToNormalString()}
+      Received Data:{toShowStringArray}
     </div>
+    // <Routes>
+    //   <Route path="/menu" element={<Test />} />
+    // </Routes>
   );
 };
 
