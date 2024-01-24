@@ -26,14 +26,14 @@ const App = () => {
     }
   };
   const readData = async () => {
-    readRef.current = portRef.current.readable.getReader();
+    readRef.current = portRef?.current?.readable?.getReader();
 
     try {
       while (true) {
-        const { value, done } = await readRef.current.read();
+        const { value, done } = await readRef?.current?.read();
         if (done) {
           // Allow the serial port to be closed later.
-          reader.releaseLock();
+          readRef?.current?.releaseLock();
           break;
         }
         if (value) {
@@ -49,7 +49,7 @@ const App = () => {
   };
   const writeData = async () => {
     setToShowStringArray([]);
-    writeRef.current = portRef.current.writable.getWriter();
+    writeRef.current = portRef?.current?.writable?.getWriter();
     const arr = [];
     // dataToSend?.map((val, i) => {
     //   arr.push(dataToSend.codePointAt(i));
