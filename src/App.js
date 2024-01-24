@@ -17,13 +17,10 @@ const App = () => {
       await portRef.current.open({ baudRate: 9600 });
       readData();
     } catch (error) {
-      if (error?.message?.includes("already open")) alert("Port already open");
-      else {
-        alert(
-          "Either the browser does not support serial port or is not enabled!"
-        );
-        console.log(error.message);
-      }
+      alert(
+        "Either the browser does not support serial port or is not enabled or the port is already is in use!"
+      );
+      console.log(error.message);
     }
   };
   const readData = async () => {
