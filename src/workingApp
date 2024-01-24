@@ -1,0 +1,79 @@
+import React, { useRef, useState } from "react";
+
+const App = () => {
+  const readRef = useRef(null);
+  const writeRef = useRef(null);
+  const portRef = useRef(null);
+  const [dataToSend, setDataToSend] = useState("");
+  const [receivedData, setReceivedData] = useState("");
+
+  const connectPort = async () => {
+    portRef.current = await navigator.serial.requestPort();
+    // const ports = await navigator.serial.getPorts();
+
+    // Wait for the serial port to open.
+    await portRef.current.open({ baudRate: 9600 });
+    readData();
+  };
+  const readData = async () => {
+    const textDecoder = new TextDecoderStream();
+    const readableStreamClosed = portRef.current.readable.pipeTo(
+      textDecoder.writable
+    );
+    readRef.current = textDecoder.readable.getReader();
+
+    // Listen to data coming from the serial device.
+    while (true) {
+      const { value, done } = await readRef.current.read();
+      console.log(value);
+      if (done) {
+        // Allow the serial port to be closed later.
+        readRef.current.releaseLock();
+        break;
+      }
+      // value is a string.
+      console.log(value);
+      setReceivedData((prev) => [...prev, value]);
+    }
+  };
+  const writeData = async () => {
+    const textEncoder = new TextEncoderStream();
+    const writableStreamClosed = textEncoder.readable.pipeTo(
+      portRef.current.writable
+    );
+
+    writeRef.current = textEncoder.writable.getWriter();
+
+    await writeRef.current.write(dataToSend);
+  };
+
+  return (
+    <div>
+      <button
+        onClick={() => {
+          connectPort();
+        }}
+      >
+        Click here to connect.
+      </button>
+      <br />
+      <input
+        type="text"
+        placeholder="Enter text"
+        value={dataToSend}
+        onChange={(e) => setDataToSend(e.target.value)}
+      />
+      <button
+        onClick={() => {
+          writeData();
+        }}
+      >
+        Send
+      </button>
+      <br />
+      Received Data:{receivedData}
+    </div>
+  );
+};
+
+export default App;
