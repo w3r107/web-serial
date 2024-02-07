@@ -77,39 +77,39 @@ const App = () => {
   };
 
   return (
-    <div>
-      <button
-        onClick={() => {
-          connectPort();
-        }}
-      >
-        Click here to connect.
-      </button>
-      <br />
-      <input
-        type="text"
-        placeholder="Enter text"
-        value={dataToSend}
-        onChange={(e) => setDataToSend(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            writeData();
-          }
-        }}
-      />
-      <button
-        onClick={() => {
-          writeData();
-        }}
-      >
-        Send
-      </button>
-      <br />
-      Received Data:{toShowStringArray}
-    </div>
-    // <Routes>
-    //   <Route path="/menu" element={<Test />} />
-    // </Routes>
+    // <div>
+    //   <button
+    //     onClick={() => {
+    //       connectPort();
+    //     }}
+    //   >
+    //     Click here to connect.
+    //   </button>
+    //   <br />
+    //   <input
+    //     type="text"
+    //     placeholder="Enter text"
+    //     value={dataToSend}
+    //     onChange={(e) => setDataToSend(e.target.value)}
+    //     onKeyDown={(e) => {
+    //       if (e.key === "Enter") {
+    //         writeData();
+    //       }
+    //     }}
+    //   />
+    //   <button
+    //     onClick={() => {
+    //       writeData();
+    //     }}
+    //   >
+    //     Send
+    //   </button>
+    //   <br />
+    //   Received Data:{toShowStringArray}
+    // </div>
+    <Routes>
+      <Route path="/menu" element={<Test />} />
+    </Routes>
   );
 };
 
